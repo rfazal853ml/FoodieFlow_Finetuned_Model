@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FoodieFlow — Meal Planner</title>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <div class="app">
+
+    <!-- Header -->
+    <header class="header">
+      <div class="logo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"
+             stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 11l19-9-9 19-2-8-8-2z"/>
+        </svg>
+      </div>
+      <div>
+        <h1>FoodieFlow</h1>
+        <p class="tagline">Your personalized meal planner</p>
+      </div>
+    </header>
+
+    <!-- Form card -->
+    <div class="card form-card">
+      <p class="section-label">Customize your plan</p>
+      <form id="planForm">
+        <div class="form-grid">
+
+          <div class="field">
+            <label for="country">Country / Cuisine</label>
+            <input type="text" id="country" name="country"
+                   placeholder="e.g. Pakistan" value="Pakistan" required />
+          </div>
+
+          <div class="field">
+            <label for="goal">Fitness goal</label>
+            <select id="goal" name="goal">
+              <option value="weight loss">Weight loss</option>
+              <option value="muscle gain">Muscle gain</option>
+              <option value="high protein">High protein</option>
+              <option value="maintenance">Maintenance</option>
+              <option value="endurance">Endurance</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="diet">Diet type</label>
+            <select id="diet" name="diet">
+              <option value="non-vegetarian">Non-vegetarian</option>
+              <option value="vegetarian">Vegetarian</option>
+              <option value="vegan">Vegan</option>
+              <option value="low carb">Low carb</option>
+              <option value="keto">Keto</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="days">Number of days</label>
+            <select id="days" name="days">
+              {% for n in range(1, 8) %}
+              <option value="{{ n }}" {% if n == 4 %}selected{% endif %}>
+                {{ n }} day{% if n > 1 %}s{% endif %}
+              </option>
+              {% endfor %}
+            </select>
+          </div>
+
+        </div>
+        <button type="submit" class="btn-generate" id="genBtn">
+          Generate meal plan
+        </button>
+      </form>
+    </div>
+
+    <!-- Error bar -->
+    <div id="errorBar" class="error-bar" style="display:none;"></div>
+
+    <!-- Results area -->
+    <div id="resultsArea">
+      <div class="empty-state">
+        <svg class="empty-icon" viewBox="0 0 64 64" fill="none"
+             xmlns="http://www.w3.org/2000/svg">
+          <circle cx="32" cy="32" r="28" stroke="currentColor" stroke-width="2"/>
+          <path d="M20 32c0-6.6 5.4-12 12-12s12 5.4 12 12"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <circle cx="24" cy="38" r="3" fill="currentColor"/>
+          <circle cx="40" cy="38" r="3" fill="currentColor"/>
+          <path d="M26 46c1.5 2 3.5 3 6 3s4.5-1 6-3"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <p class="empty-title">No plan yet</p>
+        <p class="empty-sub">Fill in your preferences above and click generate</p>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
