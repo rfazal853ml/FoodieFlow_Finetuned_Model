@@ -1,40 +1,75 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FoodieFlow — Meal Planner</title>
+  <title>FoodieFlow Meal Planner</title>
   <link rel="stylesheet" href="/static/style.css" />
 </head>
+
 <body>
   <div class="app">
 
-    <!-- Header -->
-    <header class="header">
-      <div class="logo">
-        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"
-             stroke-linecap="round" stroke-linejoin="round">
-          <path d="M3 11l19-9-9 19-2-8-8-2z"/>
+    <header class="brand">
+      <div class="brand-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"
+          stroke-linejoin="round">
+          <path
+            d="M12 2a9 9 0 0 1 9 9c0 4.17-2.84 7.67-6.69 8.69L12 22l-2.31-2.31C5.84 18.67 3 15.17 3 11a9 9 0 0 1 9-9z" />
+          <circle cx="12" cy="11" r="3" />
         </svg>
       </div>
       <div>
-        <h1>FoodieFlow</h1>
-        <p class="tagline">Your personalized meal planner</p>
+        <div class="brand-name">FoodieFlow</div>
+        <div class="brand-sub">Personalized meal planning</div>
       </div>
     </header>
 
-    <!-- Form card -->
-    <div class="card form-card">
-      <p class="section-label">Customize your plan</p>
+    <div class="hero-strip">
+      <div class="hero-text">
+        <h2>What's on your plate this week?</h2>
+        <p>Tell us your goals we'll build the perfect plan.</p>
+      </div>
+      <div class="hero-stats">
+        <div class="hstat">
+          <div class="hstat-n">4</div>
+          <div class="hstat-l">meals/day</div>
+        </div>
+        <div class="hstat">
+          <div class="hstat-n">AI</div>
+          <div class="hstat-l">powered</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <p class="section-label">Your preferences</p>
       <form id="planForm">
         <div class="form-grid">
-
           <div class="field">
-            <label for="country">Country / Cuisine</label>
-            <input type="text" id="country" name="country"
-                   placeholder="e.g. Pakistan" value="Pakistan" required />
+            <label for="country">Country</label>
+            <select id="country" name="country">
+              <option value="Brazil">Brazil</option>
+              <option value="China">China</option>
+              <option value="Ethiopia">Ethiopia</option>
+              <option value="France">France</option>
+              <option value="Greece">Greece</option>
+              <option value="India">India</option>
+              <option value="Italy">Italy</option>
+              <option value="Japan">Japan</option>
+              <option value="Korea">Korea</option>
+              <option value="Mexico">Mexico</option>
+              <option value="Middle East">Middle East</option>
+              <option value="Morocco">Morocco</option>
+              <option value="Pakistan" selected>Pakistan</option>
+              <option value="Spain">Spain</option>
+              <option value="Thailand">Thailand</option>
+              <option value="Turkey">Turkey</option>
+              <option value="USA">USA</option>
+              <option value="Vietnam">Vietnam</option>
+            </select>
           </div>
-
           <div class="field">
             <label for="goal">Fitness goal</label>
             <select id="goal" name="goal">
@@ -45,7 +80,6 @@
               <option value="endurance">Endurance</option>
             </select>
           </div>
-
           <div class="field">
             <label for="diet">Diet type</label>
             <select id="diet" name="diet">
@@ -56,48 +90,41 @@
               <option value="keto">Keto</option>
             </select>
           </div>
-
           <div class="field">
             <label for="days">Number of days</label>
             <select id="days" name="days">
               {% for n in range(1, 8) %}
-              <option value="{{ n }}" {% if n == 4 %}selected{% endif %}>
-                {{ n }} day{% if n > 1 %}s{% endif %}
-              </option>
+              <option value="{{ n }}" {% if n==4 %}selected{% endif %}>{{ n }} day{% if n > 1 %}s{% endif %}</option>
               {% endfor %}
             </select>
           </div>
-
         </div>
-        <button type="submit" class="btn-generate" id="genBtn">
-          Generate meal plan
-        </button>
+        <button type="submit" class="btn-generate" id="genBtn">Generate my meal plan</button>
       </form>
     </div>
 
-    <!-- Error bar -->
     <div id="errorBar" class="error-bar" style="display:none;"></div>
 
-    <!-- Results area -->
     <div id="resultsArea">
       <div class="empty-state">
-        <svg class="empty-icon" viewBox="0 0 64 64" fill="none"
-             xmlns="http://www.w3.org/2000/svg">
-          <circle cx="32" cy="32" r="28" stroke="currentColor" stroke-width="2"/>
-          <path d="M20 32c0-6.6 5.4-12 12-12s12 5.4 12 12"
-                stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-          <circle cx="24" cy="38" r="3" fill="currentColor"/>
-          <circle cx="40" cy="38" r="3" fill="currentColor"/>
-          <path d="M26 46c1.5 2 3.5 3 6 3s4.5-1 6-3"
-                stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-        </svg>
-        <p class="empty-title">No plan yet</p>
-        <p class="empty-sub">Fill in your preferences above and click generate</p>
+        <div class="empty-icon-wrap">
+          <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="24" cy="24" r="20" stroke="currentColor" stroke-width="1.5" />
+            <path d="M16 24c0-4.4 3.6-8 8-8s8 3.6 8 8" stroke="currentColor" stroke-width="1.5"
+              stroke-linecap="round" />
+            <circle cx="19" cy="28" r="2" fill="currentColor" />
+            <circle cx="29" cy="28" r="2" fill="currentColor" />
+            <path d="M20 34c1.2 1.8 3 2.5 4 2.5s2.8-.7 4-2.5" stroke="currentColor" stroke-width="1.5"
+              stroke-linecap="round" />
+          </svg>
+        </div>
+        <p class="empty-title">No plan generated yet</p>
+        <p class="empty-sub">Fill in your preferences above and hit generate</p>
       </div>
     </div>
 
   </div>
-
   <script src="/static/app.js"></script>
 </body>
+
 </html>

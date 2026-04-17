@@ -10,10 +10,7 @@ app = FastAPI(title="FoodieFlow")
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
-SYSTEM_PROMPT = """You are a meal planning assistant.
-
-You MUST respond with valid JSON only. Do not include any explanation, text, or formatting outside JSON.
-
+SYSTEM_PROMPT = """
 Your response must be a single JSON object with this structure:
 
 {
@@ -23,26 +20,28 @@ Your response must be a single JSON object with this structure:
       "breakfast": {
         "name": "",
         "prep_time_min": 0,
-        "difficulty": "easy",
+        "difficulty": "easy/medium/hard",
         "servings": 1,
         "calories_kcal": 0,
         "protein_g": 0
       },
-      "lunch": { "name": "", "prep_time_min": 0, "difficulty": "easy", "servings": 1, "calories_kcal": 0, "protein_g": 0 },
-      "dinner": { "name": "", "prep_time_min": 0, "difficulty": "easy", "servings": 1, "calories_kcal": 0, "protein_g": 0 },
-      "snack": { "name": "", "prep_time_min": 0, "difficulty": "easy", "servings": 1, "calories_kcal": 0, "protein_g": 0 }
+      "lunch": { "name": "", "prep_time_min": 0, "difficulty": "easy/medium/hard", "servings": 1, "calories_kcal": 0, "protein_g": 0 },
+      "dinner": { "name": "", "prep_time_min": 0, "difficulty": "easy/medium/hard", "servings": 1, "calories_kcal": 0, "protein_g": 0 },
+      "snack": { "name": "", "prep_time_min": 0, "difficulty": "easy/medium/hard", "servings": 1, "calories_kcal": 0, "protein_g": 0 }
     }
   ]
 }
 
 Rules:
-- "meal_plan" must be an array of day objects
-- Number of days must match the user's request
-- Day numbers must be sequential starting from 1
-- Do NOT include ellipsis (...) or placeholders
-- Do NOT omit any fields
-- Output must be valid JSON parsable by standard JSON parsers
-- Every bracket must open and close properly"""
+1. "meal_plan" must be an array of day objects.
+2. NUTRITIONAL ACCURACY: You must ensure "calories_kcal" and "protein_g" are scientifically realistic for the meal "name".
+3. GOAL ALIGNMENT: For "muscle gain," prioritize high-protein ingredients in the "name" and reflect this in the "protein_g" field.
+4. CUISINE MATCH: The meal "name" must be an authentic dish from the requested Country.
+5. Number of days must match the user's request.
+6. Day numbers must be sequential starting from 1.
+7. Output must be valid JSON only. No prose, no intro, no ellipsis.
+8. Every bracket must open and close properly
+"""
 
 model = None
 tokenizer = None
@@ -51,7 +50,7 @@ tokenizer = None
 async def load_model():
     global model, tokenizer
     model, tokenizer = FastLanguageModel.from_pretrained(
-        model_name="Llama-3.2-3B-Instruct",
+        model_name="full_model_merged",
         max_seq_length=2048,
         load_in_4bit=False,
     )
@@ -64,7 +63,7 @@ async def load_model():
 # --------------- Routes ---------------
 @app.get("/", response_class=HTMLResponse)
 async def index(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request})
+    return templates.TemplateResponse(request=request, name="index.html")
 
 
 @app.post("/generate")
@@ -104,6 +103,7 @@ async def generate(
     generated = tokenizer.decode(
         outputs[0][inputs.shape[1]:], skip_special_tokens=True
     )
+    print(generated)
 
     # Strip markdown fences if present
     clean = generated.strip()
@@ -115,6 +115,7 @@ async def generate(
 
     try:
         data = json.loads(clean)
+        print(data)
         return JSONResponse(content=data)
     except json.JSONDecodeError:
         return JSONResponse(
